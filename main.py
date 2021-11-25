@@ -100,7 +100,7 @@ def read_beatmaps(db, meta):
         map_info["scroll_speed"] = read_byte(db)
         beatmaps[map_info["beatmap_id"]] = map_info
 
-        print(map_info)
+        print(map_info, "meep")
     return beatmaps
 
 

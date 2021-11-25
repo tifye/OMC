@@ -1,6 +1,8 @@
 from datetime import timedelta, datetime, timezone
 import struct
 
+print("meep")
+
 def read_byte(db):
     return int.from_bytes(db.read(1), "little")
 
