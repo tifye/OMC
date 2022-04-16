@@ -1,0 +1,6 @@
+venv/
+.idea/
+__pychache__/
+.ipynb_checkpoints/
+osu!_beatmaps_data.csv
+df.tsv

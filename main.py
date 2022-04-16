@@ -17,20 +17,23 @@ def read_meta(db):
 
 def save_to_csv(beatmaps):
     csv_filename = "osu!_beatmaps_data.csv"
-    csv_columns = ["beatmap_id", "beatmap_set_id", "artist", "title", "creator", "difficulty", "status", "count_normal", "count_slider", "count_spinner", "AR", "CS", "HP", "OD", "slider_velocity", "stack_leniency", "stars", "length", "drain_time", "preview_start_time", "time_points", "mode", "tags"]
+    csv_columns = ["beatmap_id", "beatmap_set_id", "artist", "title", "creator", "audio_filename", "difficulty", "status", "count_normal", "count_slider", "count_spinner", "AR", "CS", "HP", "OD", "slider_velocity", "stack_leniency", "stars", "length", "drain_time", "preview_start_time", "time_points", "mode", "tags"]
     try:
         with open(csv_filename, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
             for beatmap in beatmaps:
+                if beatmap['mode'] != 0x00 or int(beatmap['status']) != 4:
+                    continue
                 beatmap_info = {
                     "beatmap_id": beatmap["beatmap_id"],
                     "beatmap_set_id": beatmap["beatmapset_id"],
                     "artist": beatmap["artist"].encode('utf-8'),
                     "title": beatmap["title"].encode('utf-8'),
                     "creator": beatmap["creator"].encode('utf-8'),
+                    "audio_filename": beatmap["audio_filename"].encode('utf-8'),
                     "difficulty": beatmap["version"],
-                    "status": beatmap["approved"],
+                    "status": beatmap["status"],
                     "count_normal": beatmap["count_normal"],
                     "count_slider": beatmap["count_slider"],
                     "count_spinner": beatmap["count_spinner"],
@@ -40,7 +43,7 @@ def save_to_csv(beatmaps):
                     "OD": beatmap["diff_overall"],
                     "slider_velocity": beatmap["slider_velocity"],
                     "stack_leniency": beatmap["stack_leniency"],
-                    "stars": beatmap["standard_star_ratings"],
+                    "stars": beatmap["standard_star_ratings"][0][1],
                     "length": beatmap["total_length"],
                     "drain_time": beatmap["drain_time"],
                     "preview_start_time": beatmap["preview_start_time"],
@@ -71,8 +74,7 @@ def read_beatmaps(db, meta):
         map_info["audio_filename"] = read_string(db)
         map_info["file_md5"] = read_string(db)
         map_info["filename"] = read_string(db)
-        ranked_status = read_byte(db)  # why is this different to the online api #
-        map_info["approved"] = ranked_status - 3 if ranked_status >= 4 else -2 #
+        map_info["status"] = read_byte(db)
         map_info["count_normal"] = read_short(db) #
         map_info["count_slider"] = read_short(db) #
         map_info["count_spinner"] = read_short(db) #
